@@ -7,29 +7,55 @@ from datetime import datetime
 
 
 def get_files(filepath):
+     '''
+    Returns json file as dataframe.
+
+            Parameters:
+                    filepath (str): Path to file
+
+            Returns:
+                    all_files (DataFrame): Return json file as dataframe
+    '''
     all_files = []
     for root, dirs, files in os.walk(filepath):
         files = glob.glob(os.path.join(root,'*.json'))
         for f in files :
             all_files.append(os.path.abspath(f))
-    
+
     return all_files
 
 
 def process_song_file(cur, filepath):
-    # open song file
-    df = pd.read_json(filepath, lines=True) 
+    '''
+    Process song file.
 
-    # insert song record
+            Parameters:
+                    cur: Cursor of database
+                    filepath (str): Path to file
+
+    '''
+
+    # open song file
+    df = pd.read_json(filepath, lines=True)
+
     song_data =  df[["song_id", "title", "artist_id", "year", "duration"]].values[0].tolist()
     cur.execute(song_table_insert, song_data)
-    
+
     # insert artist record
     artist_data =  list(df[["artist_id", "artist_name", "artist_location", "artist_latitude", "artist_longitude"]].values[0])
     cur.execute(artist_table_insert, artist_data)
 
 
 def process_log_file(cur, filepath):
+
+        '''
+        Process log file.
+
+                Parameters:
+                        cur: Cursor of database
+                        filepath (str): Path to file
+
+        '''
     # open log file
     log_files = get_files("data/log_data")
     filepath = log_files[0]
@@ -40,7 +66,7 @@ def process_log_file(cur, filepath):
 
     # convert timestamp column to datetime
     t = pd.to_datetime(df['ts'], unit='ms')
-    
+
     # insert time data records
     time_data = list((t, t.dt.hour, t.dt.day, t.dt.weekofyear, t.dt.month, t.dt.year, t.dt.weekday))
     column_labels = list(('start_time', 'hour', 'day', 'week', 'month', 'year', 'weekday'))
@@ -58,11 +84,11 @@ def process_log_file(cur, filepath):
 
     # insert songplay records
     for index, row in df.iterrows():
-        
+
         # get songid and artistid from song and artist tables
         cur.execute(song_select, (row.song, row.artist, row.length))
         results = cur.fetchone()
-        
+
         if results:
             songid, artistid = results
         else:
@@ -75,6 +101,17 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+
+        '''
+        Process data and insert on database (ELT Process).
+
+                Parameters:
+                        cur: Cursor of database
+                        conn: Connnection with database
+                        filepath (str): Path to file
+                        func: Method to process file
+
+        '''
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
