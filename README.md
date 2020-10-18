@@ -1,8 +1,6 @@
 
 
-![](banner.gif	)
-
-
+![](PostgresQL.png)
 
 
 
@@ -49,9 +47,35 @@ ETL Design can be simplified to read JSON documents and parse accordingly to kee
 
 **Database Script**
 
-Writing"python create_tables.py" command in terminal, it is easier to create and recreate tables
+Writing python create_tables.py" command in terminal, it is easier to create and recreate tables
+
+**Run ETL**
+
+to run ETL process use command python elt.py
 
 **Jupyter Notebook**
 
-ETL.ipynb, a Jupyter laptop is provided for verifying each command and data also then using those statements and copying into etl.py and running it into a terminal with"python etl.py" and then conducting test.ipynb to see if data has been loaded in all the tables
+ETL.ipynb, a Jupyter laptop is provided for verifying each command and data also then using those statements and copying into etl.py and running it into a terminal with"python etl.py" and then conducting test.ipynb to see if data has been loaded in all the tables.
+
+
+
+#### Project structure Files used on the project:
+
+1. **sql_queries.py** contains all your sql queries
+
+2. **create_tables.py** drops and creates tables. You run this file to reset your tables before each time you run your ETL scripts.
+
+3. **test.ipynb** displays the firstrows of each table to let you check your database.
+
+4. **etl.ipynb** reads and processes a single file from song_data and log_data and loads the data into your tables.
+
+5. **etl.py** reads and processes files from song_data and log_data and loads them into your tables.
+
+6. **README.md** current file
+
+   
+
+
+
+
 
